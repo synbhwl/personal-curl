@@ -88,3 +88,109 @@ what happend here
 - process.exit(1) just stops running the script and 1 means something went wrong, like a OS code
 
 *note- if u r wondering how the user's input is the process, node basically considers the arg also within the process context once u hit enter*
+
+# day 2 29 june 2025
+> thinking of adding something new, i am kind of confused about my learning framework and stuff.
+
+**what do i add**
+i have a few ways to make the thing better 
+- i can add parsing for methods, headers and body too
+- parse the same stuff from the response 
+- i can make it compatible with https 
+- add a saving to file system 
+
+lets pick the first for today
+**parsing for methods headers and body**
+```
+const method_input = process.argv[3]? process.argv[3].toUpperCase():undefined;
+const validMethods = ['GET', 'POST', 'PUT','DELETE', 'PATCH', 'OPTIONS', 'HEAD'];
+const method = validMethods.includes(method_input)?method_input:'GET';
+```
+- so this fixed the parsing part to a few extent
+- the first varible value is a conditional that stays if is process.argv[3] there/true? if yes then do this : if no then this;
+- we made it undefined so that it doesnt throw an error
+- next variable has an array containing the valid methods
+- lastly method variable's value is also a similar conditional that says does the array include the input? if yes then method is the input or if it is false or undefined, its GET by default
+
+*but this has a major problem*
+- the position is fixed, which makes the position ususable for other things.
+- what if the user doesnt wanna write custom method but just a custom header
+- one way couldve been to add a ductape solution by making it a rule to write '/' for empty places but how would the user know which idx should be for what 
+- so i researched a bit and found a much better way
+
+```
+const validMethods = ['GET', 'POST', 'PUT','DELETE', 'PATCH', 'OPTIONS', 'HEAD'];
+let method = 'GET';
+
+const custom = process.argv.slice(3);
+for (let i=0; i < custom.length; i++){
+    if (custom[i] === '--method' && custom[i+1] && validMethods.includes(custom[i+1].toUpperCase()) == true){
+        method = custom[i+1].toUpperCase();
+    };
+};
+```
+- added some of my own logic to the thing
+- array stays the same
+- i initialised a method with 'get' as default as a fallback if the if statement never shoots
+- process.argv.slice(3) takes out the first 3 things from the input
+- custom[i] === '--method' && custom[i+1] && validMethods.includes(custom[i+1].toUpperCase()) == true - this basically checks whether and if there is a --method command written and a next command written that is in the damn array, make that as the method 
+- *also i reaslied that there is a dictionary way to do it* so let me research a bit about that as well
+
+**dictionary way of doing it?**
+```
+// info dictionary 
+const info = {
+    method: 'GET',
+    headers: {},
+    data: {}
+};
+
+//adding parsing for method and header 
+const validMethods = ['GET', 'POST', 'PUT','DELETE', 'PATCH', 'OPTIONS', 'HEAD'];
+
+const custom = process.argv.slice(3);
+for (let i=0; i < custom.length; i++){
+    const flag = custom[i];
+    const value = custom[i+1];
+    if (!value) continue;
+
+    if (flag === '--method' && value && validMethods.includes(value.toUpperCase()) == true){
+        info.method = value.toUpperCase();
+        i++;
+    } else if (flag === '--header' && value){
+        const {key, val} = value.split(':');
+        info.headers[key.trim()] = val.trim();
+        i++;
+    } else if (flag === '--data' && value){
+        const {key, val} = value.split('=');
+        info.data[key.trim()] = val.trim();
+        i++;
+    };
+};
+```
+notes on this 
+- first we made a dict that stores these dynamic value 
+- the valid method array is still there
+- we start with the 4th argument 
+- we make the i the flag i.e the first argument and i+1 the value 
+- we say that even if there are no values move frwrd and do nothing 
+- we check if the flag is method and if it is and is a valid method, we put it inside thr dict and we increment the i to go one idx ahead and the loop restarts 
+- and checks whether the flag is header and if it is and the value is there, it splits the value by ":" and stores them as a pair of key and value and finally puts them into the dictionary 
+- same for data but split by '='
+
+*but then, it has to be added into the manual request too*
+
+*but here is a problem as well, what if the user tries to add multiple headers or data*
+```
+        if (value.includes('&&')){
+            const parts = value.split('&&');
+            for (j=0; j <parts.length; j++){
+                const {key, val} = parts[j].split(':');
+                info.headers[key.trim()] = val.trim();
+            };
+        };
+```
+- i did a double split and added t inside the actual else if statement and i did the same to handle multiple data
+- i am not happy with it because of the circuler logic, lack of reusability and lack of data flow design
+- i think i will call it a day for today, i am also realising that i must do DSA 
+- ill also get started with a new project in a few days to learn more 
