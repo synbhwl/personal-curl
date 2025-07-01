@@ -1,4 +1,4 @@
-# curl-clone (Node.js)
+# personal-curl (Node.js)
 
 A minimal cURL-like CLI tool built from scratch using low-level Node.js modules. This project was built to deepen understanding of HTTP, TCP sockets, and request/response handling without using high-level abstractions like `axios` or `fetch`.
 
