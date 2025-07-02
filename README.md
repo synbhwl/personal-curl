@@ -26,4 +26,4 @@ This tool performs a manual HTTP request over a TCP connection using Node.js’s
 ## Example Usage
 
 ```bash
-node curl.js http://example.com --method POST --header "Content-Type: application/json&&Accept: */*" --data "username=admin&&password=123"
+node curl.js http://example.com --method POST --header Content-Type: application/json&&Accept: */* --data username=admin&&password=123
