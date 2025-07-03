@@ -23,7 +23,5 @@ This tool performs a manual HTTP request over a TCP connection using Node.js’s
 - Manual request construction and response logging
 - Graceful connection termination and logging
 
-## Example Usage
-
-```bash
-node curl.js http://example.com --method POST --header Content-Type: application/json&&Accept: */* --data username=admin&&password=123
+## Limitations 
+- The parsing hasn't been synced with the manual request string yet. 
